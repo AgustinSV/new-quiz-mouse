@@ -1,5 +1,5 @@
 // api/signup.js
-import connectToDatabase from './config/database';
+import connectToDatabase from './config/database.js';
 import mongoose from 'mongoose';
 
 const credentialSchema = new mongoose.Schema({
