@@ -29,6 +29,6 @@ export default async function handler(req, res) {
       res.status(500).json({ error: 'Error saving user' });
     }
   } else {
-    res.status(405).json({ error: 'Method not allowed' });
+    res.status(405).json({ error: 'Method not allowed!' });
   }
 }
