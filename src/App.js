@@ -1,16 +1,16 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import LandingPageHeader from './pages/landing-page/header/LandingPageHeader';
-import LandingPageBody from './pages/landing-page/body/LandingPageBody';
-import CreatePageHeader from './pages/create-page/header/CreatePageHeader';
-import CreatePageBody from './pages/create-page/body/CreatePageBody';
-import FlashcardPageHeader from './pages/flashcard-page/header/FlashcardPageHeader';
-import FlashcardPageBody from './pages/flashcard-page/body/FlashcardPageBody';
-import LogInPageHeader from './pages/log-in-page/header/LogInPageHeader';
-import LogInPageBody from './pages/log-in-page/body/LogInPageBody';
-import SignUpPageHeader from './pages/sign-up-page/header/SignUpPageHeader';
-import SignUpPageBody from './pages/sign-up-page/body/SignUpPageBody';
-import MainPageHeader from './pages/main-page/header/MainPageHeader';
-import MainPageBody from './pages/main-page/body/MainPageBody';
+import LandingPageHeader from './pages/landing-page/header/LandingPageHeader.jsx';
+import LandingPageBody from './pages/landing-page/body/LandingPageBody.jsx';
+import CreatePageHeader from './pages/create-page/header/CreatePageHeader.jsx';
+import CreatePageBody from './pages/create-page/body/CreatePageBody.jsx';
+import FlashcardPageHeader from './pages/flashcard-page/header/FlashcardPageHeader.jsx';
+import FlashcardPageBody from './pages/flashcard-page/body/FlashcardPageBody.jsx';
+import LogInPageHeader from './pages/log-in-page/header/LogInPageHeader.jsx';
+import LogInPageBody from './pages/log-in-page/body/LogInPageBody.jsx';
+import SignUpPageHeader from './pages/sign-up-page/header/SignUpPageHeader.jsx';
+import SignUpPageBody from './pages/sign-up-page/body/SignUpPageBody.jsx';
+import MainPageHeader from './pages/main-page/header/MainPageHeader.jsx';
+import MainPageBody from './pages/main-page/body/MainPageBody.jsx';
 
 function App() {
   return (
