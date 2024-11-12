@@ -12,10 +12,9 @@ export default async function handler(req, res) {
   if (req.method === 'POST') {
     try {
       await connectToDatabase();
-
       const { username, password } = req.body;
-      const newCredential = new Credential({ username, password });
 
+      const newCredential = new Credential({ username, password });
       await newCredential.save();
 
       res.status(201).json({ message: 'User created successfully' });
@@ -23,6 +22,6 @@ export default async function handler(req, res) {
       res.status(500).json({ error: 'Error saving user' });
     }
   } else {
-    res.status(405).json({ error: 'Method not allowed!' });
+    req.status(405).json({ error: 'Method not allowed' });
   }
 }
