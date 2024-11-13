@@ -1,21 +1,14 @@
 import connectToDatabase from './config/database.js';
-import mongoose from 'mongoose';
-
-const credentialSchema = new mongoose.Schema({
-  username: { type: String, required: true },
-  password: { type: String, required: true },
-});
-const Credential =
-  mongoose.models.Credential || mongoose.model('Credential', credentialSchema);
+import Credential from './models/User.js';
 
 export default async function handler(req, res) {
   if (req.method === 'POST') {
     try {
       await connectToDatabase();
       const { username, password } = req.body;
-      console.log(username);
+
       const usernameExist = await Credential.findOne({
-        username: username,
+        username,
       });
       if (usernameExist) {
         res.status(409).json({ message: 'User name already exists' });

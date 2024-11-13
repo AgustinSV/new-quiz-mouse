@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
 import './sign-up-page-body.css';
+import { useNavigate } from 'react-router-dom';
 
 const SignUpPageBody = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const navigate = useNavigate();
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -21,6 +24,8 @@ const SignUpPageBody = () => {
         console.log(data.message);
         setUsername('');
         setPassword('');
+
+        navigate('/main', { state: { username } });
       } else {
         const errorData = await response.json();
         console.error(errorData.error);
