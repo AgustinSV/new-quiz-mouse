@@ -7,6 +7,7 @@ const SignUpPageBody = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      // console.log(JSON.stringify({ username }));
       const response = await fetch('/api/signup', {
         method: 'POST',
         headers: {
@@ -17,12 +18,12 @@ const SignUpPageBody = () => {
 
       if (response.ok) {
         const data = await response.json();
-        console.log('User created successfully:', data.message);
+        console.log(data.message);
         setUsername('');
         setPassword('');
       } else {
         const errorData = await response.json();
-        console.error('Error', errorData.error);
+        console.error(errorData.error);
       }
     } catch (err) {
       console.error(err);
