@@ -4,17 +4,19 @@ import './MainPageBody.css';
 
 const MainPageBody = () => {
   const location = useLocation();
-  const { username } = location.state;
+  const { user } = location.state;
 
-  if (!username) {
-    return <Navigate to="/" />;
-  }
+  console.log(user);
+
+  // if (!username) {
+  //   return <Navigate to="/" />;
+  // }
 
   return (
     <div>
       <div className="flex justify-between">
         <div className="flex flex-col m-16">
-          <div className="greet-user">Hello {username}</div>
+          <div className="greet-user">Hello {}</div>
           <div className="header text-xl justify-center">
             Your Flashcard Sets:
           </div>

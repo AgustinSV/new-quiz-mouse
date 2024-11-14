@@ -18,12 +18,11 @@ const LogIn = () => {
         body: JSON.stringify({ username, password }),
       });
       if (response.ok) {
-        const data = await response.json();
-        console.log(data.message);
-        console.log(data);
+        const user = await response.json();
+        console.log(user.message);
         setUsername('');
         setPassword('');
-        navigate('/main', { state: { username } }); // Pass username as an object in state
+        navigate('/main', { state: { user } });
       } else {
         const errData = await response.json();
         console.error(errData.error);
