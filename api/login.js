@@ -1,5 +1,5 @@
 import connectToDatabase from './config/database.js';
-import User from './models/User.js';
+import Credential from './models/Credential.js';
 
 export default async function handler(req, res) {
   if (req.method === 'POST') {
@@ -7,7 +7,7 @@ export default async function handler(req, res) {
       await connectToDatabase();
       const { username, password } = req.body;
 
-      const user = await User.findOne({ username, password }).select(
+      const user = await Credential.findOne({ username, password }).select(
         'username flashcardSets'
       );
 

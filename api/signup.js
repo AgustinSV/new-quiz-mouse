@@ -1,5 +1,5 @@
 import connectToDatabase from './config/database.js';
-import Credential from './models/User.js';
+import Credential from './models/Credential.js';
 
 export default async function handler(req, res) {
   if (req.method === 'POST') {
@@ -10,6 +10,7 @@ export default async function handler(req, res) {
       const usernameExist = await Credential.findOne({
         username,
       });
+
       if (usernameExist) {
         res.status(409).json({ message: 'User name already exists' });
       } else {
