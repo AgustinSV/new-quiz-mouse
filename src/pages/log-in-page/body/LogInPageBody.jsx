@@ -10,7 +10,6 @@ const LogIn = () => {
     e.preventDefault();
     try {
       const response = await fetch('/api/login', {
-        // Update to /api/login
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

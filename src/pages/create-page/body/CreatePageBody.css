@@ -1,0 +1,19 @@
+.container {
+  padding: 75px;
+}
+
+.title-label {
+  font-size: xx-large;
+  font-weight: 500;
+}
+
+.qa-pair {
+  padding: 40px;
+  display: flex;
+  justify-content: space-around;
+  gap: 50px;
+}
+
+input {
+  margin: 20px;
+}
