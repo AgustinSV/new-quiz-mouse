@@ -1,13 +1,11 @@
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import './sign-up-page-body.css';
 import { useNavigate } from 'react-router-dom';
-import { userContext } from '../../../App';
 
 const SignUpPageBody = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
-  const [user, setUser] = useContext(userContext);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -21,11 +19,10 @@ const SignUpPageBody = () => {
       });
 
       if (response.ok) {
-        const userData = await response.json();
-        console.log(user.message);
         setUsername('');
         setPassword('');
-        setUser(userData);
+        localStorage.setItem('qm_username', username);
+        localStorage.setItem('qm_password', password);
         navigate('/main');
       } else {
         const errorData = await response.json();

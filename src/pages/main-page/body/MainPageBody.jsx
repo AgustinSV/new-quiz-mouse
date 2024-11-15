@@ -1,20 +1,15 @@
-import React, { useContext } from 'react';
-import { Navigate } from 'react-router-dom';
-import { userContext } from '../../../App';
+import React from 'react';
 import './MainPageBody.css';
 
 const MainPageBody = () => {
-  const [{ user }] = useContext(userContext);
-
-  if (!user) {
-    return <Navigate to="/" />;
-  }
+  const username = localStorage.getItem('qm_username');
+  const password = localStorage.getItem('qm_password');
 
   return (
     <div>
       <div className="flex justify-between">
         <div className="flex flex-col m-16">
-          <div className="greet-user">Hello {user.username}</div>
+          <div className="greet-user">Hello {username}</div>
           <div className="header text-xl justify-center">
             Your Flashcard Sets:
           </div>

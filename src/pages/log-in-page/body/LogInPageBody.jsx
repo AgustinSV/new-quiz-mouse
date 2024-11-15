@@ -1,13 +1,10 @@
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { userContext } from '../../../App';
 
 const LogIn = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
-  // eslint-disable-next-line
-  const [_, setUser] = useContext(userContext);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -20,11 +17,10 @@ const LogIn = () => {
         body: JSON.stringify({ username, password }),
       });
       if (response.ok) {
-        const userData = await response.json();
-        console.log(userData.message);
         setUsername('');
         setPassword('');
-        setUser(userData);
+        localStorage.setItem('qm_username', username);
+        localStorage.setItem('qm_password', password);
         navigate('/main');
       } else {
         const errData = await response.json();

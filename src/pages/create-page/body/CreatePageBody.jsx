@@ -1,11 +1,11 @@
-import { useContext, useState } from 'react';
-import { userContext } from '../../../App';
+import { useState } from 'react';
 import './CreatePageBody.css';
 
 function CreatePageBody() {
-  const [{ user }] = useContext(userContext);
   const [title, setTitle] = useState('');
   const [cards, setCards] = useState([{ question: '', answer: '' }]);
+  const username = localStorage.getItem('qm_username');
+  const password = localStorage.getItem('qm_password');
 
   const handleTitleChange = (e) => setTitle(e.target.value);
 
@@ -18,9 +18,10 @@ function CreatePageBody() {
   const addCard = () => {
     setCards([...cards, { question: '', answer: '' }]);
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(title, cards, user.username, user.password);
+
     try {
       const response = await fetch('/api/create', {
         method: 'POST',
@@ -28,8 +29,8 @@ function CreatePageBody() {
         body: JSON.stringify({
           title,
           cards,
-          username: user.username,
-          password: user.password,
+          username,
+          password,
         }),
       });
 

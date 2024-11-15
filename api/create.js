@@ -1,5 +1,5 @@
-import { connectToDatabase } from './config/dabase.js';
-import { Credential } from './models/Credential.js';
+import connectToDatabase from './config/database.js';
+import Credential from './models/Credential.js';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
