@@ -1,16 +1,17 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import './sign-up-page-body.css';
 import { useNavigate } from 'react-router-dom';
+import { userContext } from '../../../App';
 
 const SignUpPageBody = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
+  const [user, setUser] = useContext(userContext);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // console.log(JSON.stringify({ username }));
       const response = await fetch('/api/signup', {
         method: 'POST',
         headers: {
@@ -20,12 +21,12 @@ const SignUpPageBody = () => {
       });
 
       if (response.ok) {
-        const data = await response.json();
-        console.log(data.message);
+        const userData = await response.json();
+        console.log(user.message);
         setUsername('');
         setPassword('');
-
-        navigate('/main', { state: { username } });
+        setUser(userData);
+        navigate('/main');
       } else {
         const errorData = await response.json();
         console.error(errorData.error);

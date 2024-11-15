@@ -2,6 +2,10 @@
   padding: 75px;
 }
 
+form {
+  display: flex;
+  flex-direction: column;
+}
 .title-label {
   font-size: xx-large;
   font-weight: 500;
@@ -12,8 +16,15 @@
   display: flex;
   justify-content: space-around;
   gap: 50px;
+  padding-bottom: 20px;
 }
 
 input {
   margin: 20px;
+}
+
+.add-card {
+  width: 75px;
+  align-self: center;
+  margin-bottom: 50px;
 }

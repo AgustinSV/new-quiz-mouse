@@ -17,7 +17,9 @@ export default async function handler(req, res) {
         const newCredential = new Credential({ username, password });
         await newCredential.save();
 
-        res.status(201).json({ message: 'User created successfully' });
+        const user = await Credential.findOne({ username, password });
+
+        res.status(201).json({ message: 'User created successfully', user });
       }
     } catch (error) {
       res.status(500).json({ error: 'Error saving user' });
