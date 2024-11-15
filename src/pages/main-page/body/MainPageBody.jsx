@@ -1,33 +1,65 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import './MainPageBody.css';
+import { Navigate } from 'react-router-dom';
 
 const MainPageBody = () => {
   const username = localStorage.getItem('qm_username');
   const password = localStorage.getItem('qm_password');
+  const [flashcardSets, setFlashcardSets] = useState(null);
+
+  useEffect(() => {
+    async function flashcardSetGatherer() {
+      const response = await fetch('/api/main', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password }),
+      });
+
+      if (!response.ok) {
+        console.error('Fetch request failed');
+      }
+
+      const { flashcardSets: flashcardSetsData } = await response.json();
+      setFlashcardSets(flashcardSetsData.flashcardSets);
+    }
+
+    flashcardSetGatherer();
+  }, [username, password]);
+
+  if (!username) {
+    return <Navigate to="/" />;
+  }
 
   return (
     <div>
-      <div className="flex justify-between">
-        <div className="flex flex-col m-16">
-          <div className="greet-user">Hello {username}</div>
+      <div className="m-container">
+        <div className="main-component">
+          <div className="greet-user">Welcome {username},</div>
           <div className="header text-xl justify-center">
             Your Flashcard Sets:
           </div>
           <div className="flashcard-set-container">
-            <div>**ex (1). Users flashcard sets go here**</div>
-            <div>**ex (2). Users flashcard sets go here**</div>
-            <div>**ex (3). Users flashcard sets go here**</div>
-            <div>**ex (4). Users flashcard sets go here**</div>
+            {flashcardSets ? (
+              flashcardSets.map((flashcardSet, index) => (
+                <div className="flashcard-sets" key={index}>
+                  {flashcardSet.title}
+                </div>
+              ))
+            ) : (
+              <div className="loading-flashcard-sets">
+                Loading Flashcard Sets...
+              </div>
+            )}
           </div>
         </div>
-        <div>
+        {/* <div className="side-component">
           <div className="box bg-blue-500 p-4 text-white m-16 flex flex-col space-y-4">
-            <div>Search for a flashcard set</div>
+            <div>PlaceHolder Feature</div>
           </div>
           <div className="box bg-blue-500 p-4 text-white m-16 flex flex-col space-y-4">
-            Create a flashcard set
+            <div>PlaceHolder Feature</div>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );

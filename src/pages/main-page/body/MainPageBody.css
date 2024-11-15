@@ -1,4 +1,33 @@
+.m-container {
+  display: flex;
+  justify-content: space-between;
+  padding: 75px;
+}
+
+.main-component {
+  width: 500px;
+}
+
 .greet-user {
   font-size: xx-large;
+  font-weight: 650;
+}
+
+.header {
+  font-size: x-large;
+  padding: 10px;
+  font-weight: 550;
+}
+
+.loading-flashcard-sets,
+.flashcard-sets {
+  margin: 20px;
+  padding: 10px;
+  font-size: larger;
   font-weight: 500;
+}
+
+.flashcard-sets {
+  background-color: #3b82f6;
+  color: white;
 }

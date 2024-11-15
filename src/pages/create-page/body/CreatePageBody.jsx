@@ -1,11 +1,17 @@
 import { useState } from 'react';
+import { Navigate, useNavigate } from 'react-router-dom';
 import './CreatePageBody.css';
 
 function CreatePageBody() {
   const [title, setTitle] = useState('');
   const [cards, setCards] = useState([{ question: '', answer: '' }]);
+  const navigate = useNavigate();
   const username = localStorage.getItem('qm_username');
   const password = localStorage.getItem('qm_password');
+
+  if (!username) {
+    return <Navigate to="/" />;
+  }
 
   const handleTitleChange = (e) => setTitle(e.target.value);
 
@@ -39,6 +45,7 @@ function CreatePageBody() {
         console.log(data.message);
         setTitle('');
         setCards([{ question: '', answer: '' }]);
+        navigate('/main');
       } else {
         console.error(data.error);
       }
