@@ -47,7 +47,7 @@ const MainPageBody = () => {
               ))
             ) : (
               <div className="loading-flashcard-sets">
-                Loading Flashcard Sets...
+                Loading Flashcard Sets . . .
               </div>
             )}
           </div>

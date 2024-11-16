@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link } from 'react-router-dom';
 
 function CreatetoLogIn() {
   return (
@@ -8,7 +8,7 @@ function CreatetoLogIn() {
         src="../plus_square.png"
         alt="Create Flashcard Icon"
       />
-      <p className="text-white opacity-8 ml-1">Create</p>
+      <p className="text-white opacity-85 hover:opacity-[1] ml-1">Create</p>
     </Link>
   );
 }

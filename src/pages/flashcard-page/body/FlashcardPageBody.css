@@ -1,0 +1,56 @@
+.f-container {
+  padding: 75px;
+  width: 100vw;
+}
+
+.title {
+  font-size: xx-large;
+  font-weight: 500;
+}
+
+.flashcard-container {
+  width: 100%;
+  height: 500px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.flashcard {
+  width: 60%;
+  height: 300px;
+  background-color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.flashcard-content {
+  font-size: larger;
+}
+
+.flashcard-options {
+  width: 50%;
+  display: flex;
+  justify-content: space-around;
+  user-select: none;
+}
+
+.prev-card,
+.flip-card,
+.next-card {
+  width: 50px;
+  text-align: center;
+  background-color: #7197c3;
+  color: white;
+  padding: 3px;
+  margin: 15px;
+  box-sizing: border-box;
+}
+
+.prev-card:hover,
+.flip-card:hover,
+.next-card:hover {
+  background-color: #a8c1db;
+}

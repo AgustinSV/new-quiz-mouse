@@ -27,4 +27,10 @@ input {
   width: 75px;
   align-self: center;
   margin-bottom: 50px;
+  background-color: #7197c3;
+  color: white;
+}
+
+.add-card:hover {
+  background-color: #a8c1db;
 }

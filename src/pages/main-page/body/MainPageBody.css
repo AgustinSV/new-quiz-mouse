@@ -28,6 +28,10 @@
 }
 
 .flashcard-sets {
-  background-color: #3b82f6;
+  background-color: #7197c3;
   color: white;
+}
+
+.flashcard-sets:hover {
+  background-color: #a8c1db;
 }
