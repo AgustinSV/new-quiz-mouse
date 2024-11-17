@@ -14,7 +14,6 @@ function FlashcardPageBody() {
   useEffect(() => {
     async function getFlashcardSet() {
       const flashcardSetTitle = location.state || '';
-      // console.log(flashcardSetTitle);
       const response = await fetch('/api/flashcard', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
