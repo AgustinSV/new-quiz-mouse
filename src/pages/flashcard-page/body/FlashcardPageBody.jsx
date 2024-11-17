@@ -1,4 +1,4 @@
-import { Navigate } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 import './FlashcardPageBody.css';
 import { useEffect, useState } from 'react';
 
@@ -8,19 +8,27 @@ function FlashcardPageBody() {
   const [flashcardSets, setFlashcardSets] = useState(null);
   const [cards, setCards] = useState(null);
   const [cardIndex, setCardIndex] = useState(0);
+  const [isQuestion, setIsQuestion] = useState('question');
+  const location = useLocation();
 
   useEffect(() => {
     async function getFlashcardSet() {
+      const flashcardSetTitle = location.state || '';
+      // console.log(flashcardSetTitle);
       const response = await fetch('/api/flashcard', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password }),
       });
       const { flashcardSets: flashcardSetsData } = await response.json();
-      setFlashcardSets(flashcardSetsData.flashcardSets[3]);
+      const flashcardSet = flashcardSetsData.flashcardSets.find(
+        (flashcardSet) =>
+          flashcardSet.title === flashcardSetTitle.flashcardSetTitle
+      );
+      setFlashcardSets(flashcardSet);
     }
     getFlashcardSet();
-  }, [username, password]);
+  }, [username, password, location]);
 
   useEffect(() => {
     if (flashcardSets) {
@@ -32,47 +40,85 @@ function FlashcardPageBody() {
     return <Navigate to="/" />;
   }
 
-  if (flashcardSets) {
-    //   console.log(flashcardSets);
-  }
+  const shuffleArray = (array) => {
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+  };
 
-  if (cards) {
-    // console.log(cards[0].question);
-    // let cardOrder = ;
-    // const firstCard = cards[0];
-    // const lastCard = cards[-1];
-  }
+  const shuffleCard = () => {
+    if (cards) {
+      const shuffledCards = shuffleArray(cards);
+      setCards(shuffledCards);
+      setCardIndex(0);
+      setIsQuestion('question');
+    }
+  };
 
   const prevCard = () => {
     if (cardIndex > 0) {
       setCardIndex((prevIndex) => prevIndex - 1);
+      setIsQuestion('question');
     }
+  };
+
+  const flipCard = () => {
+    setIsQuestion((prevState) =>
+      prevState === 'question' ? 'answer' : 'question'
+    );
   };
 
   const nextCard = () => {
     if (cards && cardIndex < cards.length - 1) {
       setCardIndex((prevIndex) => prevIndex + 1);
+      setIsQuestion('question');
     }
   };
 
   return (
     <div className="f-container">
       <div className="title">
-        {flashcardSets ? flashcardSets.title : 'Title is loading . . .'}
+        {flashcardSets ? flashcardSets.title : 'Title loading . . .'}
       </div>
       <div className="flashcard-container">
-        <div className="flashcard">
+        <div onClick={flipCard} className="flashcard">
           <div className="flashcard-content">
-            {cards ? cards[cardIndex].question : 'question loading . . .'}
+            {cards ? cards[cardIndex][isQuestion] : 'question loading . . .'}
           </div>
         </div>
-        <div className="flashcard-options">
-          <div onClick={prevCard} className="prev-card">
-            prev
+        <div className="all-flashcard-options">
+          <div onClick={shuffleCard} className="shuffle-card">
+            <img
+              className="shuffle-img"
+              src="/shuffle-icon.png"
+              alt="shuffle icon"
+            />
           </div>
-          <div className="flip-card">flip</div>
-          <div onClick={nextCard} className="next-card">
-            next
+          <div className="flashcard-options">
+            <div onClick={prevCard} className="prev-card">
+              <img
+                className="flashcard-options-imgs"
+                src="/left-arrow.png"
+                alt="left arrow icon"
+              />
+            </div>
+            <div onClick={flipCard} className="flip-card">
+              <img
+                className="flashcard-options-imgs flip-card-img"
+                src="/flip-card.png"
+                alt="flip card icon"
+              />
+            </div>
+            <div onClick={nextCard} className="next-card">
+              <img
+                className="flashcard-options-imgs"
+                src="/right-arrow.png"
+                alt="right arrow icon"
+              />
+            </div>
           </div>
         </div>
       </div>

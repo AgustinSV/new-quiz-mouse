@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import './MainPageBody.css';
-import { Navigate } from 'react-router-dom';
+import { useNavigate, Navigate } from 'react-router-dom';
 
 const MainPageBody = () => {
   const username = localStorage.getItem('qm_username');
   const password = localStorage.getItem('qm_password');
   const [flashcardSets, setFlashcardSets] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     async function flashcardSetGatherer() {
@@ -26,6 +27,10 @@ const MainPageBody = () => {
     flashcardSetGatherer();
   }, [username, password]);
 
+  const sendToNewPage = (flashcardSetTitle) => {
+    navigate('/flashcard', { state: { flashcardSetTitle } });
+  };
+
   if (!username) {
     return <Navigate to="/" />;
   }
@@ -41,7 +46,10 @@ const MainPageBody = () => {
           <div className="flashcard-set-container">
             {flashcardSets ? (
               flashcardSets.map((flashcardSet, index) => (
-                <div className="flashcard-sets" key={index}>
+                <div
+                  onClick={() => sendToNewPage(flashcardSet.title)}
+                  className="flashcard-sets"
+                  key={index}>
                   {flashcardSet.title}
                 </div>
               ))

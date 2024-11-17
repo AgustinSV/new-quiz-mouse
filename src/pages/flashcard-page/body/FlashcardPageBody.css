@@ -24,14 +24,49 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  cursor: pointer;
+  user-select: none;
 }
 
 .flashcard-content {
   font-size: larger;
 }
 
-.flashcard-options {
+.all-flashcard-options {
+  width: 60%;
+  display: flex;
+  align-items: center;
+}
+
+.shuffle-card {
+  width: 10%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  user-select: none;
+}
+
+.shuffle-img {
   width: 50%;
+}
+
+.flashcard-options-imgs {
+  width: 50%;
+  filter: brightness(0) invert(1);
+}
+
+.flip-card-img {
+  width: 60%;
+  transform: rotate(90deg);
+}
+
+.shuffle-img:hover {
+  opacity: 0.5;
+}
+
+.flashcard-options {
+  width: 80%;
   display: flex;
   justify-content: space-around;
   user-select: none;
@@ -41,12 +76,13 @@
 .flip-card,
 .next-card {
   width: 50px;
-  text-align: center;
   background-color: #7197c3;
   color: white;
   padding: 3px;
   margin: 15px;
   box-sizing: border-box;
+  display: flex;
+  justify-content: center;
 }
 
 .prev-card:hover,

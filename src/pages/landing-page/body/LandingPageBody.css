@@ -1,0 +1,18 @@
+.l-container {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.mom-daughter-img {
+  width: auto;
+  position: relative;
+}
+
+.mom-daughter-txt {
+  position: absolute;
+  top: 45%;
+  left: 30%;
+  transform: translate(-50%, -50%);
+}
