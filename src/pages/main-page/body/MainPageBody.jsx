@@ -60,14 +60,7 @@ const MainPageBody = () => {
             )}
           </div>
         </div>
-        {/* <div className="side-component">
-          <div className="box bg-blue-500 p-4 text-white m-16 flex flex-col space-y-4">
-            <div>PlaceHolder Feature</div>
-          </div>
-          <div className="box bg-blue-500 p-4 text-white m-16 flex flex-col space-y-4">
-            <div>PlaceHolder Feature</div>
-          </div>
-        </div> */}
+        <div></div>
       </div>
     </div>
   );

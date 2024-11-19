@@ -1,7 +1,8 @@
 .m-container {
-  display: flex;
-  justify-content: space-between;
   padding: 75px;
+  margin-top: 50px;
+  display: flex;
+  justify-content: space-around;
 }
 
 .main-component {
