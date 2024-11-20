@@ -1,23 +1,48 @@
 .m-container {
-  padding: 75px;
+  padding: 25px;
   margin-top: 50px;
   display: flex;
-  justify-content: space-around;
+  justify-content: center;
 }
 
 .main-component {
-  width: 500px;
+  width: 800px;
+}
+
+.intro-box {
+  display: flex;
+  flex-direction: column;
 }
 
 .greet-user {
   font-size: xx-large;
   font-weight: 650;
+  color: white;
+  padding-top: 25px;
 }
 
 .header {
   font-size: x-large;
   padding: 10px;
   font-weight: 550;
+  padding-left: 55px;
+  padding-bottom: 20px;
+  padding-top: 25px;
+  color: white;
+}
+
+.flashcard-set-container {
+  width: 100%;
+  background: #7197c3;
+  padding: 35px;
+  display: flex;
+  justify-content: center;
+}
+
+.flashcard-list {
+  width: 500px;
+  margin-top: 30px;
+  margin-bottom: 30px;
 }
 
 .loading-flashcard-sets,
@@ -28,11 +53,11 @@
   font-weight: 500;
 }
 
-.flashcard-sets {
+/* .flashcard-sets {
   background-color: #7197c3;
   color: white;
 }
 
 .flashcard-sets:hover {
   background-color: #a8c1db;
-}
+} */
