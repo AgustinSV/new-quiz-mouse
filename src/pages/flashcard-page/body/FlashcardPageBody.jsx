@@ -29,10 +29,14 @@ function FlashcardPageBody() {
         setFlashcardSets(flashcardSet);
         setCards(flashcardSet.cards);
 
-        // Extract answers and generate AI relationships
-        const answersArray = flashcardSet.cards.map((card) => card.answer);
-        const userInput = `Find relationships between the following answers: "${answersArray}". 
-        Return a JSON object where each relationship includes a description and an array of question-answer pairs it involves.`;
+        // Pass full question-answer pairs to AI
+        const questionAnswerPairs = flashcardSet.cards.map((card) => ({
+          question: card.question,
+          answer: card.answer,
+        }));
+        const userInput = `Analyze the following question-answer pairs and find relationships between them. Return a JSON object where each relationship includes a description and the involved question-answer pairs:\n${JSON.stringify(
+          questionAnswerPairs
+        )}`;
 
         const aiResponse = await fetch('/api/chat', {
           method: 'POST',
@@ -173,22 +177,22 @@ function FlashcardPageBody() {
                   <strong>Relationship:</strong>{' '}
                   {relationship.description || 'No description'}
                   <div className="qa-pairs">
-                    {relationship.qa_pairs?.map((qa, qaIndex) => (
+                    {relationship.involved_pairs?.map((pair, pairIndex) => (
                       <div
-                        key={`qa-pair-${index}-${qaIndex}`}
+                        key={`qa-pair-${index}-${pairIndex}`}
                         className="question-and-answer">
-                        <div className="q-or-a">
-                          <strong>Question:</strong>
-                          <div className="qa-content">
-                            {qa.question || 'No question'}
+                        {Object.values(pair).map((qa, qaIndex) => (
+                          <div
+                            key={`qa-${pairIndex}-${qaIndex}`}
+                            className="q-or-a">
+                            <strong>
+                              {qaIndex === 0 ? 'Question:' : 'Answer:'}
+                            </strong>
+                            <div className="qa-content">
+                              {qa.question || qa.answer || 'Not provided'}
+                            </div>
                           </div>
-                        </div>
-                        <div className="q-or-a">
-                          <strong>Answer:</strong>
-                          <div className="qa-content">
-                            {qa.answer || 'No answer'}
-                          </div>
-                        </div>
+                        ))}
                       </div>
                     ))}
                   </div>
