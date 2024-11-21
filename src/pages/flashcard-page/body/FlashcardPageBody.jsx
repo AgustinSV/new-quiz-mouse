@@ -144,6 +144,35 @@ function FlashcardPageBody() {
           </div>
         </div>
       </div>
+      <div className="qa-container">
+        <div className="qa-inner-container">
+          <div className="qa-title">
+            {flashcardSets ? flashcardSets.title : 'Title loading . . .'}
+          </div>
+          <div className="qa-inner-inner-container">
+            {cards ? (
+              cards.map((card, index) => (
+                <div key={`card-${index}`} className="question-and-answer">
+                  <div className="q-or-a">
+                    <div className="qa-content">{card['question']}</div>
+                  </div>
+                  <div className="q-or-a">
+                    <div className="qa-content">{card['answer']}</div>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="question-and-answer">
+                <div className="q-or-a">
+                  <div className="qa-content">
+                    Questions and Answers loading...
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
