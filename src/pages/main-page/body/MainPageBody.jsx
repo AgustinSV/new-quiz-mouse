@@ -51,7 +51,7 @@ const MainPageBody = () => {
             <div className="intro-box">
               <div className="greet-user">Welcome {username},</div>
               <div className="header text-xl justify-center">
-                Your Flashcard Sets:
+                Flashcard Sets:
               </div>
             </div>
             <div className="flashcard-list-bg">

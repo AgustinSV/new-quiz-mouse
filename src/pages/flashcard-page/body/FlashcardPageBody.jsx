@@ -47,6 +47,7 @@ function FlashcardPageBody() {
 
   const shuffleCard = () => {
     if (cards) {
+      setIsFlipped((prev) => !prev);
       const shuffledCards = shuffleArray(cards);
       setCards(shuffledCards);
       setCardIndex(0);
@@ -56,6 +57,8 @@ function FlashcardPageBody() {
 
   const prevCard = () => {
     if (cardIndex > 0) {
+      setIsFlipped((prev) => !prev);
+
       setCardIndex((prevIndex) => prevIndex - 1);
       setIsQuestion('question');
     }
@@ -71,6 +74,8 @@ function FlashcardPageBody() {
 
   const nextCard = () => {
     if (cards && cardIndex < cards.length - 1) {
+      setIsFlipped((prev) => !prev);
+
       setCardIndex((prevIndex) => prevIndex + 1);
       setIsQuestion('question');
     }

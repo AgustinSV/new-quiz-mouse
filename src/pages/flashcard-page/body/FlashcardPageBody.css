@@ -10,6 +10,7 @@
   font-size: xx-large;
   font-weight: 500;
   padding-bottom: 20px;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 
 .flashcard-container {
@@ -28,6 +29,7 @@
 
 .flashcard-content {
   font-size: larger;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
   color: black;
 }
 
