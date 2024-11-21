@@ -9,6 +9,7 @@ function FlashcardPageBody() {
   const [cards, setCards] = useState(null);
   const [cardIndex, setCardIndex] = useState(0);
   const [isQuestion, setIsQuestion] = useState('question');
+  const [isFlipped, setIsFlipped] = useState(false);
   const location = useLocation();
 
   useEffect(() => {
@@ -34,10 +35,6 @@ function FlashcardPageBody() {
       setCards(flashcardSets.cards);
     }
   }, [flashcardSets]);
-
-  if (!username) {
-    return <Navigate to="/" />;
-  }
 
   const shuffleArray = (array) => {
     const shuffled = [...array];
@@ -65,6 +62,8 @@ function FlashcardPageBody() {
   };
 
   const flipCard = () => {
+    setIsFlipped((prev) => !prev);
+
     setIsQuestion((prevState) =>
       prevState === 'question' ? 'answer' : 'question'
     );
@@ -77,15 +76,33 @@ function FlashcardPageBody() {
     }
   };
 
+  if (!username) {
+    return <Navigate to="/" />;
+  }
+
   return (
     <div className="f-container">
-      <div className="title">
-        {flashcardSets ? flashcardSets.title : 'Title loading . . .'}
-      </div>
       <div className="flashcard-container">
-        <div onClick={flipCard} className="flashcard">
-          <div className="flashcard-content">
-            {cards ? cards[cardIndex][isQuestion] : 'question loading . . .'}
+        <div className="title">
+          {flashcardSets ? flashcardSets.title : 'Title loading . . .'}
+        </div>
+        <div className="flashcard" onClick={flipCard}>
+          <div className={`flip-card-inner ${isFlipped ? 'flipped' : ''}`}>
+            <div className="flip-card-front">
+              {' '}
+              <div className="flashcard-content">
+                {cards
+                  ? cards[cardIndex][isQuestion]
+                  : 'question loading . . .'}
+              </div>
+            </div>
+            <div className="flip-card-back">
+              <div className="flashcard-content">
+                {cards
+                  ? cards[cardIndex][isQuestion]
+                  : 'question loading . . .'}
+              </div>
+            </div>
           </div>
         </div>
         <div className="all-flashcard-options">
@@ -96,6 +113,7 @@ function FlashcardPageBody() {
               alt="shuffle icon"
             />
           </div>
+
           <div className="flashcard-options">
             <div onClick={prevCard} className="prev-card">
               <img
@@ -104,7 +122,7 @@ function FlashcardPageBody() {
                 alt="left arrow icon"
               />
             </div>
-            <div onClick={flipCard} className="flip-card">
+            <div onClick={flipCard} className="flip-cards">
               <img
                 className="flashcard-options-imgs flip-card-img"
                 src="/flip-card.png"

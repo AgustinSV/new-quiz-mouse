@@ -39,6 +39,11 @@
   justify-content: center;
 }
 
+.flashcard-list-bg {
+  width: 650px;
+  background-color: #daf0f7;
+}
+
 .flashcard-list {
   width: 500px;
   margin-top: 30px;
