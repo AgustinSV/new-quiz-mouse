@@ -10,31 +10,53 @@ function FlashcardPageBody() {
   const [cardIndex, setCardIndex] = useState(0);
   const [isQuestion, setIsQuestion] = useState('question');
   const [isFlipped, setIsFlipped] = useState(false);
+  const [aiMessage, setAiMessage] = useState(null);
   const location = useLocation();
 
   useEffect(() => {
-    async function getFlashcardSet() {
-      const flashcardSetTitle = location.state || '';
-      const response = await fetch('/api/flashcard', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password }),
-      });
-      const { flashcardSets: flashcardSetsData } = await response.json();
-      const flashcardSet = flashcardSetsData.flashcardSets.find(
-        (flashcardSet) =>
-          flashcardSet.title === flashcardSetTitle.flashcardSetTitle
-      );
-      setFlashcardSets(flashcardSet);
-    }
-    getFlashcardSet();
-  }, [username, password, location]);
+    async function getFlashcardSetAndGenerateRelationships() {
+      try {
+        const flashcardSetTitle = location.state || '';
+        const response = await fetch('/api/flashcard', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password }),
+        });
+        const { flashcardSets: flashcardSetsData } = await response.json();
+        const flashcardSet = flashcardSetsData.flashcardSets.find(
+          (set) => set.title === flashcardSetTitle.flashcardSetTitle
+        );
+        setFlashcardSets(flashcardSet);
+        setCards(flashcardSet.cards);
 
-  useEffect(() => {
-    if (flashcardSets) {
-      setCards(flashcardSets.cards);
+        // Extract answers and generate AI relationships
+        const answersArray = flashcardSet.cards.map((card) => card.answer);
+        const userInput = `Find relationships between the following answers: "${answersArray}". 
+        Return a JSON object where each relationship includes a description and an array of question-answer pairs it involves.`;
+
+        const aiResponse = await fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userInput }),
+        });
+
+        if (aiResponse.ok) {
+          const aiData = await aiResponse.json();
+          setAiMessage(JSON.parse(aiData.reply)); // Parse AI response
+          console.log(JSON.parse(aiData.reply));
+        } else {
+          console.error('Failed to fetch AI relationships');
+        }
+      } catch (error) {
+        console.error(
+          'Error fetching flashcard data or AI relationships:',
+          error
+        );
+      }
     }
-  }, [flashcardSets]);
+
+    getFlashcardSetAndGenerateRelationships();
+  }, [username, password, location]);
 
   const shuffleArray = (array) => {
     const shuffled = [...array];
@@ -47,7 +69,7 @@ function FlashcardPageBody() {
 
   const shuffleCard = () => {
     if (cards) {
-      setIsFlipped((prev) => !prev);
+      setIsFlipped(false);
       const shuffledCards = shuffleArray(cards);
       setCards(shuffledCards);
       setCardIndex(0);
@@ -57,8 +79,7 @@ function FlashcardPageBody() {
 
   const prevCard = () => {
     if (cardIndex > 0) {
-      setIsFlipped((prev) => !prev);
-
+      setIsFlipped(false);
       setCardIndex((prevIndex) => prevIndex - 1);
       setIsQuestion('question');
     }
@@ -66,7 +87,6 @@ function FlashcardPageBody() {
 
   const flipCard = () => {
     setIsFlipped((prev) => !prev);
-
     setIsQuestion((prevState) =>
       prevState === 'question' ? 'answer' : 'question'
     );
@@ -74,8 +94,7 @@ function FlashcardPageBody() {
 
   const nextCard = () => {
     if (cards && cardIndex < cards.length - 1) {
-      setIsFlipped((prev) => !prev);
-
+      setIsFlipped(false);
       setCardIndex((prevIndex) => prevIndex + 1);
       setIsQuestion('question');
     }
@@ -94,18 +113,13 @@ function FlashcardPageBody() {
         <div className="flashcard" onClick={flipCard}>
           <div className={`flip-card-inner ${isFlipped ? 'flipped' : ''}`}>
             <div className="flip-card-front">
-              {' '}
               <div className="flashcard-content">
-                {cards
-                  ? cards[cardIndex][isQuestion]
-                  : 'question loading . . .'}
+                {cards ? cards[cardIndex][isQuestion] : 'Question loading...'}
               </div>
             </div>
             <div className="flip-card-back">
               <div className="flashcard-content">
-                {cards
-                  ? cards[cardIndex][isQuestion]
-                  : 'question loading . . .'}
+                {cards ? cards[cardIndex][isQuestion] : 'Answer loading...'}
               </div>
             </div>
           </div>
@@ -118,7 +132,6 @@ function FlashcardPageBody() {
               alt="shuffle icon"
             />
           </div>
-
           <div className="flashcard-options">
             <div onClick={prevCard} className="prev-card">
               <img
@@ -147,28 +160,42 @@ function FlashcardPageBody() {
       <div className="qa-container">
         <div className="qa-inner-container">
           <div className="qa-title">
-            {flashcardSets ? flashcardSets.title : 'Title loading . . .'}
+            {flashcardSets ? flashcardSets.title : 'Relationships loading...'}
           </div>
-          <div className="qa-inner-inner-container">
-            {cards ? (
-              cards.map((card, index) => (
-                <div key={`card-${index}`} className="question-and-answer">
-                  <div className="q-or-a">
-                    <div className="qa-content">{card['question']}</div>
-                  </div>
-                  <div className="q-or-a">
-                    <div className="qa-content">{card['answer']}</div>
+
+          {/* Relationships Section */}
+          <div className="relationships-section">
+            {aiMessage?.relationships?.length > 0 ? (
+              aiMessage.relationships.map((relationship, index) => (
+                <div
+                  key={`relationship-${index}`}
+                  className="relationship-container">
+                  <strong>Relationship:</strong>{' '}
+                  {relationship.description || 'No description'}
+                  <div className="qa-pairs">
+                    {relationship.qa_pairs?.map((qa, qaIndex) => (
+                      <div
+                        key={`qa-pair-${index}-${qaIndex}`}
+                        className="question-and-answer">
+                        <div className="q-or-a">
+                          <strong>Question:</strong>
+                          <div className="qa-content">
+                            {qa.question || 'No question'}
+                          </div>
+                        </div>
+                        <div className="q-or-a">
+                          <strong>Answer:</strong>
+                          <div className="qa-content">
+                            {qa.answer || 'No answer'}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
               ))
             ) : (
-              <div className="question-and-answer">
-                <div className="q-or-a">
-                  <div className="qa-content">
-                    Questions and Answers loading...
-                  </div>
-                </div>
-              </div>
+              <div>Generating relationships...</div>
             )}
           </div>
         </div>

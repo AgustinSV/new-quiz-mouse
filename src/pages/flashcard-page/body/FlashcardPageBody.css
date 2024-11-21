@@ -28,6 +28,7 @@
 
 .flashcard-content {
   font-size: larger;
+  width: 80%;
   font-family: Verdana, Geneva, Tahoma, sans-serif;
   color: black;
 }
