@@ -29,7 +29,6 @@ function FlashcardPageBody() {
         setFlashcardSets(flashcardSet);
         setCards(flashcardSet.cards);
 
-        // Pass full question-answer pairs to AI
         const questionAnswerPairs = flashcardSet.cards.map((card) => ({
           question: card.question,
           answer: card.answer,
@@ -46,7 +45,7 @@ function FlashcardPageBody() {
 
         if (aiResponse.ok) {
           const aiData = await aiResponse.json();
-          setAiMessage(JSON.parse(aiData.reply)); // Parse AI response
+          setAiMessage(JSON.parse(aiData.reply));
         } else {
           console.error('Failed to fetch AI relationships');
         }
