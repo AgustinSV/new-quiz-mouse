@@ -1,9 +1,6 @@
 import OpenAI from 'openai';
 
-const openai = new OpenAI({
-  apiKey:
-    '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',
-});
+const openai = new OpenAI({});
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -29,7 +26,6 @@ export default async function handler(req, res) {
       ],
     });
 
-    // Extract and return the assistant's reply
     const answer =
       response.choices[0]?.message?.content || 'No response generated.';
     res.status(200).json({ reply: answer });

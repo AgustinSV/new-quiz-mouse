@@ -6,6 +6,11 @@
   font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 
+.relationship {
+  padding: 10px;
+  padding-bottom: 15px;
+}
+
 .main-component {
   width: 800px;
 }
@@ -49,6 +54,9 @@
   width: 500px;
   margin-top: 30px;
   margin-bottom: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
 .loading-flashcard-sets,
@@ -58,12 +66,3 @@
   font-size: larger;
   font-weight: 500;
 }
-
-/* .flashcard-sets {
-  background-color: #7197c3;
-  color: white;
-}
-
-.flashcard-sets:hover {
-  background-color: #a8c1db;
-} */

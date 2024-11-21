@@ -43,8 +43,7 @@ const MainPageBody = () => {
 
         if (aiResponse.ok) {
           const aiData = await aiResponse.json();
-          setAiMessage(aiData.reply);
-          console.log(aiData.reply);
+          setAiMessage(JSON.parse(aiData.reply));
         } else {
           throw new Error('Failed to fetch AI response');
         }
@@ -56,6 +55,12 @@ const MainPageBody = () => {
     fetchFlashcardDataAndAIResponse();
   }, [username, password]);
 
+  useEffect(() => {
+    if (aiMessage) {
+      console.log('Relationships:', aiMessage.relationships);
+    }
+  }, [aiMessage]);
+
   const sendToNewPage = (flashcardSetTitle) => {
     navigate('/flashcard', { state: { flashcardSetTitle } });
   };
@@ -65,23 +70,23 @@ const MainPageBody = () => {
   }
 
   return (
-    <div>
-      <div className="m-container">
-        <div className="main-component">
-          <div className="flashcard-set-container">
-            <div className="intro-box">
-              <div className="greet-user">Welcome {username},</div>
-              <div className="header text-xl justify-center">
-                Flashcard Sets:
-              </div>
-            </div>
-            <div className="flashcard-list-bg">
-              <div className="flashcard-list">
-                {flashcardSets ? (
-                  flashcardSets.map((flashcardSet, index) => (
-                    <div
-                      onClick={() => sendToNewPage(flashcardSet.title)}
-                      key={index}>
+    <div className="m-container">
+      <div className="main-component">
+        <div className="flashcard-set-container">
+          <div className="intro-box">
+            <div className="greet-user">Welcome {username},</div>
+            <div className="header text-xl justify-center">Flashcard Sets:</div>
+          </div>
+          <div className="flashcard-list-bg">
+            <div className="flashcard-list">
+              {aiMessage?.relationships?.length > 0 ? (
+                aiMessage.relationships.map((relationship, index) => (
+                  <div key={`relationship-${index}`}>
+                    <div>
+                      <strong className="relationship">Relationship:</strong>{' '}
+                      {relationship.relationship || 'No relationship'}
+                    </div>
+                    {relationship.titles?.length > 0 ? (
                       <Box
                         sx={{
                           width: '100%',
@@ -90,43 +95,50 @@ const MainPageBody = () => {
                         }}>
                         <nav aria-label="secondary mailbox folders">
                           <List>
-                            <ListItem disablePadding>
-                              <ListItemButton component="a">
-                                {flashcardSet.title}
-                              </ListItemButton>
-                            </ListItem>
+                            {relationship.titles.map((title, titleIndex) => (
+                              <ListItem
+                                key={`title-${index}-${titleIndex}`}
+                                disablePadding>
+                                <ListItemButton
+                                  onClick={() => sendToNewPage(title)}
+                                  component="a">
+                                  {title}
+                                </ListItemButton>
+                              </ListItem>
+                            ))}
                           </List>
                         </nav>
                         <Divider />
                       </Box>
-                    </div>
-                  ))
-                ) : (
-                  <div>
-                    <Box
-                      sx={{
-                        width: '100%',
-                        maxWidth: 500,
-                        bgcolor: 'white',
-                      }}>
-                      <nav aria-label="secondary mailbox folders">
-                        <List>
-                          <ListItem disablePadding>
-                            <ListItemButton component="a">
-                              Loading flashcard sets . . .
-                            </ListItemButton>
-                          </ListItem>
-                        </List>
-                      </nav>
-                      <Divider />
-                    </Box>
+                    ) : (
+                      <div>No titles available</div>
+                    )}
                   </div>
-                )}
-              </div>
+                ))
+              ) : (
+                <div>
+                  <Box
+                    sx={{
+                      width: '100%',
+                      maxWidth: 500,
+                      bgcolor: 'white',
+                    }}>
+                    <nav aria-label="secondary mailbox folders">
+                      <List>
+                        <ListItem disablePadding>
+                          <ListItemButton component="a">
+                            Loading relationships . . .
+                          </ListItemButton>
+                        </ListItem>
+                      </List>
+                    </nav>
+                    <Divider />
+                  </Box>
+                </div>
+              )}
             </div>
           </div>
         </div>
-        <div></div>
       </div>
     </div>
   );
