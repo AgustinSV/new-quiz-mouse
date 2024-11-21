@@ -1,5 +1,10 @@
-.container {
-  padding: 75px;
+.c-container {
+  padding: 25px;
+  margin-top: 50px;
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 
 form {

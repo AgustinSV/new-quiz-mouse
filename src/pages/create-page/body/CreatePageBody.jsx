@@ -55,7 +55,7 @@ function CreatePageBody() {
   };
 
   return (
-    <div className="container">
+    <div className="c-container">
       <form onSubmit={handleSubmit}>
         <label className="title-label" htmlFor="title">
           Title:
