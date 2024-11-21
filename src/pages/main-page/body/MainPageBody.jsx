@@ -33,7 +33,7 @@ const MainPageBody = () => {
         const titlesArray = flashcardSetsData.flashcardSets.map(
           (set) => set.title
         );
-        const userInput = `Find relationships between titles in the following list: "${titlesArray}". If there are 4 titles total, you should find about 2 relationships, and if there are 16 titles, you should find about 4 connections, and so on. Return a JSON object with the relationship, and the titles included in that relationship.`;
+        const userInput = `Analyze the following "${titlesArray}" to identify meaningful and memorable relationships between them. For each of the 'relationships', provide a concise yet impactful 'description' that captures a unique or logically significant connection, keep the vocabulary simple. Return the result as a JSON object where each relationship includes a 'description' and the 'titles' that are being described. The description should be less than 16 words and be ideally at least 3 meaningful connections.`;
 
         const aiResponse = await fetch('/api/chat', {
           method: 'POST',
@@ -83,8 +83,11 @@ const MainPageBody = () => {
                 aiMessage.relationships.map((relationship, index) => (
                   <div key={`relationship-${index}`}>
                     <div>
-                      <strong className="relationship">Relationship:</strong>{' '}
-                      {relationship.relationship || 'No relationship'}
+                      {console.log(relationship)}
+                      <strong className="relationship">
+                        Relationship:
+                      </strong>{' '}
+                      {relationship.description || 'No relationship'}
                     </div>
                     {relationship.titles?.length > 0 ? (
                       <Box

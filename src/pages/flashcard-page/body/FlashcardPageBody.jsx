@@ -34,7 +34,7 @@ function FlashcardPageBody() {
           question: card.question,
           answer: card.answer,
         }));
-        const userInput = `Analyze the following question-answer pairs and find relationships between them. Return a JSON object where each relationship includes a description and the involved question-answer pairs:\n${JSON.stringify(
+        const userInput = `Analyze the following question-answer pairs to identify meaningful and memorable relationships between them. For each relationship, provide a concise yet impactful description that captures a unique or logically significant connection, keep the vocabulary simple. Return the result as a JSON object where each relationship includes a 'description' and 'involved_pairs'. The description should be less than 16 words and be ideally at least 3 meaningful connections. Additionally, the "involved_pairs" should be an array with objects that have a "question" and "answer" method:\n${JSON.stringify(
           questionAnswerPairs
         )}`;
 
@@ -47,7 +47,6 @@ function FlashcardPageBody() {
         if (aiResponse.ok) {
           const aiData = await aiResponse.json();
           setAiMessage(JSON.parse(aiData.reply)); // Parse AI response
-          console.log(JSON.parse(aiData.reply));
         } else {
           console.error('Failed to fetch AI relationships');
         }
@@ -166,9 +165,7 @@ function FlashcardPageBody() {
           <div className="qa-title">
             {flashcardSets ? flashcardSets.title : 'Relationships loading...'}
           </div>
-
-          {/* Relationships Section */}
-          <div className="relationships-section">
+          <div className="qa-inner-inner-container">
             {aiMessage?.relationships?.length > 0 ? (
               aiMessage.relationships.map((relationship, index) => (
                 <div
@@ -176,26 +173,21 @@ function FlashcardPageBody() {
                   className="relationship-container">
                   <strong>Relationship:</strong>{' '}
                   {relationship.description || 'No description'}
-                  <div className="qa-pairs">
-                    {relationship.involved_pairs?.map((pair, pairIndex) => (
-                      <div
-                        key={`qa-pair-${index}-${pairIndex}`}
-                        className="question-and-answer">
-                        {Object.values(pair).map((qa, qaIndex) => (
-                          <div
-                            key={`qa-${pairIndex}-${qaIndex}`}
-                            className="q-or-a">
-                            <strong>
-                              {qaIndex === 0 ? 'Question:' : 'Answer:'}
-                            </strong>
-                            <div className="qa-content">
-                              {qa.question || qa.answer || 'Not provided'}
-                            </div>
-                          </div>
-                        ))}
+                  {relationship.involved_pairs?.map((pair, pairIndex) => (
+                    <div
+                      key={`qa-pair-${index}-${pairIndex}`}
+                      className="question-and-answer">
+                      <div className="q-or-a">
+                        {console.log(pair)}
+                        <div className="qa-content">
+                          {pair.question || 'No question'}
+                        </div>
+                        <div className="qa-content">
+                          {pair.answer || 'No answer'}
+                        </div>
                       </div>
-                    ))}
-                  </div>
+                    </div>
+                  ))}
                 </div>
               ))
             ) : (

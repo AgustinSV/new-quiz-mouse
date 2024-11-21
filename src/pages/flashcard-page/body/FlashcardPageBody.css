@@ -174,13 +174,13 @@ body {
 
 .question-and-answer {
   display: flex;
-  flex-wrap: wrap;
+  width: 100%;
   justify-content: space-between;
   gap: 20px;
 }
 
 .q-or-a {
-  width: 45%;
+  width: 100%;
   background-color: white;
   height: auto;
   min-height: 75px;
@@ -190,6 +190,7 @@ body {
   box-sizing: border-box;
   padding: 10px;
   margin: 10px;
+  box-sizing: border-box;
 }
 
 .qa-content {
@@ -198,4 +199,5 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  color: black;
 }
