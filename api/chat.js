@@ -1,6 +1,6 @@
 import OpenAI from 'openai';
 
-const openai = new OpenAI({});
+const openai = new OpenAI();
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
