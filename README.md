@@ -54,3 +54,5 @@ if you run into issues when downloading and running the app, you can visit "http
 ## License information
 
 [MIT License](/LICENSE.txt)
+
+\*\* we changed to this new repo because we had to get rid of our ties to firebase when switching to vercel and it was easier to create a new repo and copy our frontend code then find out what was still connected to firebase and what wasn't
