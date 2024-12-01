@@ -3,7 +3,7 @@
 ## Names & GitHub IDs:
 
 - Agustin Salas-Vaca
-  - github id: Agustin Salas-Vaca
+  - github id: Agustin Salas-Vaca & AgustinSV
 - Molly Mckenzie
   - github id: mollymckenzie
 - Talla Diop
