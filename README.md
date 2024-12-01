@@ -1,6 +1,6 @@
-## Quiz Mouse
+# Quiz Mouse
 
-**Names & GitHub IDs:**
+## Names & GitHub IDs:
 
 - Agustin Salas-Vaca
   - github id: Agustin Salas-Vaca
@@ -19,24 +19,16 @@
 
 ## Description
 
-Brief description of what your product does, its purpose, and key features.
+This React app lets users create flashcards and organizes them using AI. The AI sorts the flashcards into categories based on how they are related, making studying and learning easier and more organized.
 
-## Table of Contents
+## Instructions
 
-- [Description](#description)
-- [Installation](#installation)
-- [Usage](#usage)
-- [License](#license)
+- Download:
+- Install:
+- Run:
 
-## Installation
+## How to use product
 
-### Prerequisites
+## License information
 
-List any dependencies, software, or tools required (e.g., Node.js, npm, etc.).
-
-### Steps
-
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/your-repo-url.git
-   ```
+[MIT License](/LICENSE.txt)
