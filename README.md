@@ -50,6 +50,7 @@ if you run into issues when downloading and running the app, you can visit "http
   - questions and answers you made
   - ability to shuffle, go to the previous, go to the next, and flip the card
 - if you scroll down in that same page you will see connections made for the flashcard set that you are in
+- at the main page you can also click a button at the bottom to play a matching game, where you select the matching question and answer for the flashcard sets 
 
 ## License information
 
