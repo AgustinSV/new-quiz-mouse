@@ -33,7 +33,7 @@ const MainPageBody = () => {
         const titlesArray = flashcardSetsData.flashcardSets.map(
           (set) => set.title
         );
-        const userInput = `Analyze the following "${titlesArray}" to identify meaningful and memorable relationships between them. For each of the 'relationships', provide a concise yet impactful 'description' that captures a unique or logically significant connection, keep the vocabulary simple. Return the result as a JSON object where each relationship includes a 'description' and the 'titles' that are being described. The description should be less than 16 words and be ideally at least 3 meaningful connections.`;
+        const userInput = `Analyze the following "${titlesArray}" to identify meaningful and memorable relationships between them.`;
 
         const aiResponse = await fetch('/api/chat', {
           method: 'POST',
@@ -65,6 +65,10 @@ const MainPageBody = () => {
     navigate('/flashcard', { state: { flashcardSetTitle } });
   };
 
+  const goToMatchingGame = () => {
+    navigate('/matching-game');
+  };
+
   if (!username) {
     return <Navigate to="/" />;
   }
@@ -83,7 +87,6 @@ const MainPageBody = () => {
                 aiMessage.relationships.map((relationship, index) => (
                   <div key={`relationship-${index}`}>
                     <div>
-                      {console.log(relationship)}
                       <strong className="relationship">
                         Relationship:
                       </strong>{' '}
@@ -142,6 +145,9 @@ const MainPageBody = () => {
             </div>
           </div>
         </div>
+        <button onClick={goToMatchingGame} className="matching-game-button">
+          Play Matching Game
+        </button>
       </div>
     </div>
   );

@@ -12,6 +12,9 @@ import SignUpPageHeader from './pages/sign-up-page/header/SignUpPageHeader.jsx';
 import SignUpPageBody from './pages/sign-up-page/body/SignUpPageBody.jsx';
 import MainPageHeader from './pages/main-page/header/MainPageHeader.jsx';
 import MainPageBody from './pages/main-page/body/MainPageBody.jsx';
+import MatchingPageBody from './pages/matching-page/body/MatchingPageBody.jsx';
+import MatchingPageHeader from './pages/matching-page/header/MatchingPageHeader.jsx';
+
 
 function App() {
   return (
@@ -75,6 +78,15 @@ function App() {
                 <FlashcardPageHeader />
                 <FlashcardPageBody />
               </>
+            }
+          />
+           <Route
+            path="/matching-game" 
+            element={
+              <>
+              <MatchingPageHeader />
+              <MatchingPageBody />
+            </>
             }
           />
         </Routes>
