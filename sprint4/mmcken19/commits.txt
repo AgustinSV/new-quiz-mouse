@@ -1,0 +1,304 @@
+MATCHING.JS:
+
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  1) import connectToDatabase from "./config/database.js";
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  2) import Credential from "./models/Credential.js";
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  3) 
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  4) export default async function handler(req, res) {
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  5)     if (req.method !== "POST") {
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  6)         return res.status(405).json({ error: "Method not allowed" });
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  7)     }
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  8)
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  9)     try {
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 10)         const { username, password } = req.body;
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 11)
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 12)         if (!username || !password) {
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 13)             return res.status(400).json({ error: "Missing username or password" });
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 14)         }
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 15)
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 16)         await connectToDatabase();
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 17)         const user = await Credential.findOne({ username, password }).select("flashcardSets");
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 18)
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 19)         if (!user || user.flashcardSets.length === 0) {
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 20)             return res.status(404).json({ error: "No matching data found or no flashcards available" });   
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 21)         }
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 22)
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 23)         res.status(200).json({
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 24)             message: "Successfully found matching data",
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 25)             matchingData: user.flashcardSets,  // Returning flashcardSets directly
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 26)         });
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 27)     } catch (err) {
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 28)         res.status(500).json({ error: "Server error" });
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 29)     }
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 30) }
+
+MATCHINGPAGEBODY.JSX:
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500   1) import React, { useState, useEffect } from "react";
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500   2) import "./MatchingPageBody.css";
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500   3)
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500   4) function MatchingPageBody() {
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500   5)   const [flashcards, setFlashcards] = useState([]);
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500   6)   const [shuffledItems, setShuffledItems] = useState([]);  // To store shuffled items
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500   7)   const [selectedItems, setSelectedItems] = useState([]);
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500   8)   const [matchedPairs, setMatchedPairs] = useState([]);
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500   9)   const [temporaryCorrect, setTemporaryCorrect] = useState([]);  // Track temporarily correct items for animation
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  10)
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  11)   useEffect(() => {
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  12)     const fetchFlashcards = async () => {
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  13)       const username = localStorage.getItem("qm_username");
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  14)       const password = localStorage.getItem("qm_password");
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  15)
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  16)       if (!username || !password) {
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  17)         console.error("No user credentials found. Please log in.");
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  18)         return;
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  19)       }
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  20)
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  21)       try {
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  22)         const response = await fetch("/api/matching", {
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  23)           method: "POST",
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  24)           headers: { "Content-Type": "application/json" },
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  25)           body: JSON.stringify({ username, password }),
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  26)         });
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  27)
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  28)         if (response.ok) {
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  29)           const data = await response.json();
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  30)
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  31)           // Create unique cards
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  32)           const cards = Array.from(
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  33)             new Map(
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  34)               data.matchingData
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  35)                 .flatMap((set) => set.cards.map((card) => ({
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  36)                   question: card.question,
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  37)                   answer: card.answer,
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  38)                   id: card._id,
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  39)                 })))
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  40)                 .map((card) => [card.id, card])
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  41)             ).values()
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  42)           );
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  43)
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  44)           setFlashcards(cards);
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  45)
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  46)           // Create and shuffle unique items
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  47)           const uniqueItems = Array.from(
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  48)             new Map(
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  49)               cards.reduce((acc, { question, answer, id }) => {
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  50)                 acc.push({ type: "question", content: question, id });
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  51)                 acc.push({ type: "answer", content: answer, id });
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  52)                 return acc;
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  53)               }, []).map((item) => [`${item.id}-${item.type}`, item])
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  54)             ).values()
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  55)           );
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  56)
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  57)           setShuffledItems(shuffleArray(uniqueItems));
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  58)         } else {
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  59)           console.error("Failed to fetch flashcards");
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  60)         }
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  61)       } catch (error) {
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  62)         console.error("Error:", error);
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  63)       }
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  64)     };
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  65)
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  66)     fetchFlashcards();
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  67)   }, []);
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  68)
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  69)
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  70)
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  71)
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  72)
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  73)   const shuffleArray = (array) => {
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  74)     const shuffled = [...array];
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  75)     for (let i = shuffled.length - 1; i > 0; i--) {
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  76)       const j = Math.floor(Math.random() * (i + 1));
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  77)       [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  78)     }
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  79)     return shuffled;
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  80)   };
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  81)
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  82)
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  83)   const handleSelect = (item) => {
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  84)     if (selectedItems.length === 2) return; // Prevent selecting more than two items
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  85)
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  86)     const newSelection = [...selectedItems, item];
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  87)     setSelectedItems(newSelection);
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  88)
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  89)     if (newSelection.length === 2) {
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  90)       const [first, second] = newSelection;
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  91)       const isMatch =
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  92)         first.type === "question" &&
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  93)         second.type === "answer" &&
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  94)         first.id === second.id;
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  95)
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  96)       if (isMatch) {
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  97)         // Correct match
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  98)         setTemporaryCorrect([first.id, second.id]);  // Temporarily mark correct for animation
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  99)         setTimeout(() => {
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 100)           setMatchedPairs((prev) => [...prev, first.id, second.id]);
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 101)           setSelectedItems([]); // Reset selection
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 102)           setTemporaryCorrect([]);  // Clear temporary correct items
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 103)         }, 1000);
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 104)       } else {
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 105)         // Incorrect match
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 106)         setTimeout(() => {
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 107)           setSelectedItems([]); // Reset selection without removing items
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 108)         }, 1000);
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 109)       }
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 110)     }
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 111)   };
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 112)
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 113)   const renderItems = () => {
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 114)     return shuffledItems
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 115)       .filter((item) => !matchedPairs.includes(item.id)) // Exclude matched pairs
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 116)       .map((item) => {
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 117)         const isSelected = selectedItems.some(
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 118)           (selected) => selected.id === item.id && selected.type === item.type
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 119)         );
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 120)
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 121)         const isCorrect = temporaryCorrect.includes(item.id);
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 122)         const isIncorrect =
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 123)           isSelected &&
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 124)           selectedItems.length === 2 &&
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 125)           !isCorrect;
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 126)
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 127)         return (
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 128)           <div
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 129)             key={`${item.id}-${item.type}`}
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 130)             className={`matching-item ${isCorrect ? "correct" : ""} ${
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 131)               isIncorrect ? "incorrect" : ""
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 132)             } ${isSelected ? "selected" : ""}`}
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 133)             onClick={() => handleSelect(item)}
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 134)           >
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 135)             {item.content}
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 136)           </div>
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 137)         );
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 138)       });
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 139)   };
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 140)
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 141)
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 142)   return (
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 143)     <div className="matching-container">
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 144)       <h1>Matching Game</h1>
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 145)       <div className="matching-grid">{renderItems()}</div>
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 146)       <div className="button-container">
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 147)         <button
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 148)           className="button-reset"
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 149)           onClick={() => {
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 150)             setSelectedItems([]);
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 151)             setMatchedPairs([]);
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 152)             setTemporaryCorrect([]);  // Clear temporary correct items when resetting
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 153)           }}
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 154)         >
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 155)           Reset Game
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 156)         </button>
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 157)       </div>
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 158)     </div>
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 159)   );
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 160) }
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 161)
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 162) export default MatchingPageBody;
+
+MATCHINGPAGEBODY.css
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  1) .matching-container {
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  2)     display: flex;
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  3)     flex-direction: column;
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  4)     align-items: center;
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  5)     margin: 20px;
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  6)     padding: 20px;
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  7)     border: 2px solid #ddd;
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  8)     border-radius: 10px;
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500  9)     background-color: #ffffff;
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 10)     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 11) }
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 12)
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 13) h1 {
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 14)     font-size: 24px;
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 15)     color: #ffffff;
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 16)     margin-bottom: 5px;
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 17) }
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 18)
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 19) .matching-grid {
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 20)     display: grid;
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 21)     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 22)     gap: 20px;
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 23)     width: 100%;
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 24)     max-width: 800px;
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 25) }
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 26)
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 27) .matching-item {
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 28)     padding: 15px;
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 29)     text-align: center;
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 30)     border: 1px solid #ddd;
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 31)     border-radius: 8px;
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 32)     background-color: #fff;
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 33)     cursor: pointer;
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 34)     font-size: 16px;
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 35)     font-weight: bold;
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 36)     transition: transform 0.2s, background-color 0.3s;
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 37) }
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 38)
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 39) .matching-item:hover {
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 40)     background-color: #e0f7fa;
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 41)     transform: scale(1.05);
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 42) }
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 43)
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 44) .matching-item.correct {
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 45)     background-color: #a5d6a7; /* Green for correct */
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 46)     border-color: #2e7d32;
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 47)     animation: correct-animation 0.3s ease-out forwards;
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 48) }
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 49)
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 50) .matching-item.incorrect {
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 51)     background-color: #ef9a9a; /* Red for incorrect */
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 52)     border-color: #911e1e;
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 53)     animation: incorrect-animation 0.3s ease-out forwards;
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 54) }
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 55)
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 56) @keyframes correct-animation {
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 57)     from {
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 58)         transform: scale(1);
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 59)     }
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 60)     to {
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 61)         transform: scale(1.1);
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 62)     }
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 63) }
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 64)
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 65) @keyframes incorrect-animation {
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 66)     from {
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 67)         transform: scale(1);
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 68)     }
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 69)     to {
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 70)         transform: scale(1.1);
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 71)     }
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 72) }
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 73)
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 74) .button-container {
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 75)     margin-top: 20px;
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 76) }
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 77)
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 78) .button-reset {
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 79)     padding: 10px 20px;
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 80)     font-size: 16px;
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 81)     color: #fff;
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 82)     background-color: #7197c3;
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 83)     border: none;
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 84)     border-radius: 5px;
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 85)     cursor: pointer;
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 86)     transition: background-color 0.3s;
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 87) }
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 88)
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 89) .button-reset:hover {
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 90)     background-color:#7197C3
+774941fe (mollymckenzie 2024-12-02 22:12:07 -0500 91) }
+
+APP.JS:
+774941fe (mollymckenzie      2024-12-02 22:12:07 -0500 15) import MatchingPageBody from './pages/matching-page/body/MatchingPageBody.jsx';
+774941fe (mollymckenzie      2024-12-02 22:12:07 -0500 16) import MatchingPageHeader from './pages/matching-page/header/MatchingPageHeader.jsx';
+774941fe (mollymckenzie      2024-12-02 22:12:07 -0500 17)
+774941fe (mollymckenzie      2024-12-02 22:12:07 -0500 83)            <Route
+774941fe (mollymckenzie      2024-12-02 22:12:07 -0500 84)             path="/matching-game"
+774941fe (mollymckenzie      2024-12-02 22:12:07 -0500 85)             element={
+774941fe (mollymckenzie      2024-12-02 22:12:07 -0500 86)               <>
+774941fe (mollymckenzie      2024-12-02 22:12:07 -0500 87)               <MatchingPageHeader />
+774941fe (mollymckenzie      2024-12-02 22:12:07 -0500 88)               <MatchingPageBody />
+774941fe (mollymckenzie      2024-12-02 22:12:07 -0500 89)             </>
+774941fe (mollymckenzie      2024-12-02 22:12:07 -0500 90)             }
+774941fe (mollymckenzie      2024-12-02 22:12:07 -0500 91)           />
+
